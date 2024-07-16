@@ -27,6 +27,14 @@ void TCP_Server(){
     char buffer[1024] = {0};
     recv(client_socket, buffer, sizeof(buffer), 0);
     std::cout << "Message from client: " << buffer << std::endl; 
+
+    // echo the client message back to them
+    int bytes_sent = send(client_socket, buffer, strlen(buffer), 0);
+    if(bytes_sent < 0){
+        std::cout << "Failed to send message to client" << std::endl;
+    }else{
+        std::cout << "Echo'd message to client" << std::endl;
+    }
     
     // close the server socket
     close(server_socket);

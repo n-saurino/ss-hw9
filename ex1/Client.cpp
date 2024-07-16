@@ -18,6 +18,11 @@ void TCP_Client(){
     connect(client_socket, (struct sockaddr*)&server_address, sizeof(server_address));
     const char* client_message = "Hello from client!";
     send(client_socket, client_message, strlen(client_message), 0);
+
+    // set up buffer to parse client message
+    char buffer[1024] = {0};
+    recv(client_socket, buffer, sizeof(buffer), 0);
+    std::cout << "Message from server: " << buffer << std::endl; 
     
     // close
     close(client_socket);

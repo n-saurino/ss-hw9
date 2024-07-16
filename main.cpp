@@ -4,6 +4,6 @@
 #include "ex2/ex2.cpp"
 
 int main(int, char**){
-    // Ex1();
-    Ex2();
+    Ex1();
+    // Ex2();
 }

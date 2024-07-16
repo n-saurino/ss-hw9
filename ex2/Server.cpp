@@ -42,6 +42,7 @@ int UDP_Server(){
         if (bytes_sent < 0) {
             std::cerr << "Failed to send message to client" << std::endl;
         }
+        break;
     }
     
     close(server_socket);

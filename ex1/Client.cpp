@@ -4,7 +4,7 @@
 #include <sys/socket.h> 
 #include <unistd.h> 
 
-void Client(){
+void TCP_Client(){
     // creating client IPv4 TCP socket
     int client_socket = socket(AF_INET, SOCK_STREAM, 0);
 

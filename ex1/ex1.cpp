@@ -12,12 +12,12 @@
 */
 
 int Ex1(){
-    std::thread t_server(Server);
+    std::thread t_server(TCP_Server);
     ScopedThread scoped_server(std::move(t_server));
     // Ensure server starts first
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    std::thread t_client(Client);
+    std::thread t_client(TCP_Client);
     ScopedThread scoped_client(std::move(t_client));
 
     return 0;

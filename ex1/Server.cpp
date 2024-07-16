@@ -4,7 +4,7 @@
 #include <sys/socket.h> 
 #include <unistd.h> 
 
-void Server(){
+void TCP_Server(){
     // create the server socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     

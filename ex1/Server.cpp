@@ -3,15 +3,8 @@
 #include <netinet/in.h> 
 #include <sys/socket.h> 
 #include <unistd.h> 
-/*
-- Write a simple TCP client-server application.
-- The server should listen on a specified port, accept connections from clients, and echo back 
-  any message it receives.
-- The client should connect to the server, send a message, and print the response from the server.
-*/
 
-
-void Ex1(){
+void Server(){
     // create the server socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     
@@ -38,8 +31,4 @@ void Ex1(){
     // close the server socket
     close(server_socket);
 
-
-
-
-    
 }

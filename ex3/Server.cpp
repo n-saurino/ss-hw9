@@ -9,6 +9,7 @@
 #define LISTENQ 5
 
 int AsyncTCPServer(){
+
     int i, max_i, max_fd, listen_fd, conn_fd, sock_fd, n_ready;
     int client[FD_SETSIZE];
 
@@ -19,7 +20,7 @@ int AsyncTCPServer(){
     struct sockaddr_in cli_address, server_address;
 
     // create listening socket/file descriptor
-    int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+    listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     
     bzero(&server_address, sizeof(server_address));
 
@@ -93,29 +94,18 @@ int AsyncTCPServer(){
                     FD_CLR(sock_fd, &all_set);
                     // remove the client's fd from the client array
                     client[i] = -1;
+                }else{
+                    write(sock_fd, buffer, n);
                 }
-                
+
+                // no more readable descriptors
+                if(--n_ready <= 0){
+                    break;
+                }
             }
         }
 
     }
 
-    /* OLD SYNCHRNOUS SERVER CODE
-    // accept
-    int client_socket = accept(server_socket, nullptr, nullptr);
-    std::cout << "Client connection established" << std::endl;
-
-    // recv
-    char buffer[1024];
-    recv(client_socket, buffer, sizeof(buffer), 0);
-    std::cout << "Message from client at server: " << buffer << std::endl;
-
-    int bytes_sent = send(client_socket, buffer, strlen(buffer), 0);
-    if(bytes_sent < 0){
-        std::cout << "Message send failure!" << std::endl;
-    }
-
-    close(server_socket);
-    */
     return 0;
 }

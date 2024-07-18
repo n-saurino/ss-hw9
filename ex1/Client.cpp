@@ -1,10 +1,12 @@
 #include <cstring> 
 #include <iostream> 
 #include <netinet/in.h> 
+#include <sstream>
 #include <sys/socket.h> 
 #include <unistd.h> 
 
 void TCP_Client(){
+    std::stringstream ss;
     // creating client IPv4 TCP socket
     int client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -22,7 +24,9 @@ void TCP_Client(){
     // set up buffer to parse client message
     char buffer[1024] = {0};
     recv(client_socket, buffer, sizeof(buffer), 0);
-    std::cout << "Message from server: " << buffer << std::endl; 
+    ss.clear();
+    ss << "Message from server: " << buffer << std::endl; 
+    std::cout << ss.str();
     
     // close
     close(client_socket);

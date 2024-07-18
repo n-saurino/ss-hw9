@@ -12,8 +12,17 @@ int Ex3(){
     
     std::thread server(AsyncTCPServer);
     ScopedThread scoped_server(std::move(server));
+
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    std::thread client(TCP_Client);
-    ScopedThread scoped_client(std::move(client));
+
+    std::thread client1(TCP_Client);
+    ScopedThread scoped_client(std::move(client1));
+
+    std::thread client2(TCP_Client);
+    ScopedThread scoped_client2(std::move(client2));
+
+    std::thread client3(TCP_Client);
+    ScopedThread scoped_client3(std::move(client3));
+
     return 0;
 }

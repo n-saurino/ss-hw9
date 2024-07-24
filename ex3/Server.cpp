@@ -1,6 +1,7 @@
 #include <cstring> 
 #include <iostream> 
 #include <netinet/in.h> 
+#include <sstream>
 #include <sys/socket.h> 
 #include <unistd.h>
 #include "../unp.h"
@@ -40,11 +41,17 @@ int AsyncTCPServer(){
     
     FD_ZERO(&all_set);
     FD_SET(listen_fd, &all_set);
+    int count = 0;
 
     while(true){
+        std::cout << "Loop " << count << std::endl;
+        count++;
+        
         r_set = all_set;
         n_ready = Select(max_fd + 1, &r_set, NULL, NULL, NULL);
 
+        // I think we are only adding one client to the clients array each time we have an incoming connection,
+        // no matter how many connections we have come in
         if(FD_ISSET(listen_fd, &r_set)){
             cli_len = sizeof(cli_address);
             conn_fd = Accept(listen_fd, (struct sockaddr*)&cli_address, &cli_len);
@@ -72,9 +79,10 @@ int AsyncTCPServer(){
             }
 
             // no more file descriptors ready to connect to
-            if(--n_ready == 0){
+            if(--n_ready <= 0){
                 continue;
             }   
+
         }
 
         for(i = 0; i <= max_i; ++i){
@@ -101,7 +109,6 @@ int AsyncTCPServer(){
                 }
             }
         }
-
     }
 
     return 0;

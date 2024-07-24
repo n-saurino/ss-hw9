@@ -1,8 +1,10 @@
+#pragma once
 #include <exception>
 #include <iostream>
 #include <netinet/in.h> 
 #include <sys/socket.h> 
 #include <unistd.h>
+#include "exceptions/BindException.h"
 
 #define MAXLINE 1024
 #define SERV_PORT 8080
@@ -24,15 +26,25 @@ int Accept(int socket, struct sockaddr* address,
 // Bind
 int Bind(int socket, const struct sockaddr* address,
        socklen_t address_len){
-        try
-        {
-            return bind(socket, address, address_len);
+        int result = bind(socket, address, address_len);
+        if(result < 0){
+            switch (errno)
+            {
+            case EBADF:
+                throw BindInvalidFileDescriptor();
+                break;
+            
+            case EIO:
+                throw BindIOException();
+                break;
+            
+            default:
+                throw BindException(strerror(errno));
+                break;
+            }
         }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-            throw std::logic_error("Bind Error");
-        }   
+
+        return result;
 }
 
 // Close

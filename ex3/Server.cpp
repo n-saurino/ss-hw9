@@ -28,7 +28,16 @@ int AsyncTCPServer(){
     server_address.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // bind
-    Bind(listen_fd, (struct sockaddr*)&server_address, sizeof(server_address));
+    try
+    {
+        Bind(listen_fd, (struct sockaddr*)&server_address, sizeof(server_address));
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "Caught: " << e.what() << '\n';
+    }
+    
+    
     
     // listen
     Listen(listen_fd, LISTENQ);
@@ -41,17 +50,12 @@ int AsyncTCPServer(){
     
     FD_ZERO(&all_set);
     FD_SET(listen_fd, &all_set);
-    int count = 0;
 
     while(true){
-        std::cout << "Loop " << count << std::endl;
-        count++;
         
         r_set = all_set;
         n_ready = Select(max_fd + 1, &r_set, NULL, NULL, NULL);
 
-        // I think we are only adding one client to the clients array each time we have an incoming connection,
-        // no matter how many connections we have come in
         if(FD_ISSET(listen_fd, &r_set)){
             cli_len = sizeof(cli_address);
             conn_fd = Accept(listen_fd, (struct sockaddr*)&cli_address, &cli_len);

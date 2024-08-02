@@ -31,16 +31,26 @@ int AsyncTCPServer(){
     try
     {
         Bind(listen_fd, (struct sockaddr*)&server_address, sizeof(server_address));
+        // Bind(-1, (struct sockaddr*)&server_address, sizeof(server_address));
     }
     catch(const std::exception& e)
     {
-        std::cout << "Caught: " << e.what() << '\n';
+        std::cerr << "Caught: " << e.what() << '\n';
     }
     
     
     
     // listen
-    Listen(listen_fd, LISTENQ);
+    try
+    {
+        Listen(listen_fd, LISTENQ);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Caught: " << e.what() << '\n';
+    }
+    
+    
 
     max_fd = listen_fd;
     max_i = -1;
@@ -54,11 +64,26 @@ int AsyncTCPServer(){
     while(true){
         
         r_set = all_set;
-        n_ready = Select(max_fd + 1, &r_set, NULL, NULL, NULL);
+        try
+        {
+            n_ready = Select(max_fd + 1, &r_set, NULL, NULL, NULL);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "Caught: " << e.what() << '\n';
+        }
 
         if(FD_ISSET(listen_fd, &r_set)){
             cli_len = sizeof(cli_address);
-            conn_fd = Accept(listen_fd, (struct sockaddr*)&cli_address, &cli_len);
+            try
+            {
+                conn_fd = Accept(listen_fd, (struct sockaddr*)&cli_address, &cli_len);
+                // conn_fd = Accept(-1, (struct sockaddr*)&cli_address, &cli_len);
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << "Caught: " << e.what() << '\n';
+            }
 
             for(i = 0; i < FD_SETSIZE; ++i){
                 if(client[i] < 0){
@@ -98,13 +123,30 @@ int AsyncTCPServer(){
                 if((n = Read(sock_fd, buffer, MAXLINE)) == 0){
                     // connection closed by client
                     // so close our file descriptor to that client
-                    Close(sock_fd);
+                    try
+                    {
+                        Close(sock_fd);
+                        // Close(-1);
+                    }
+                    catch(const std::exception& e)
+                    {
+                        std::cerr << "Caught: " << e.what() << '\n';
+                    }
+                    
+                    
                     // reset the bit in the fd array to 0
                     FD_CLR(sock_fd, &all_set);
                     // remove the client's fd from the client array
                     client[i] = -1;
                 }else{
-                    Write(sock_fd, buffer, n);
+                    try
+                    {
+                        Write(sock_fd, buffer, n);
+                    }
+                    catch(const std::exception& e)
+                    {
+                        std::cerr << "Caught: " << e.what() << '\n';
+                    }
                 }
 
                 // no more readable descriptors
